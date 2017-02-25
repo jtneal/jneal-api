@@ -1,0 +1,14 @@
+{
+    "name": "jtneal/jneal-api",
+    "description": "jneal.com - API",
+    "license": "MIT",
+    "require": {
+        "silex/silex": "~2.0",
+        "monolog/monolog": "^1.22"
+    },
+    "autoload": {
+        "psr-4": {
+            "JNeal\\": "src/"
+        }
+    }
+}

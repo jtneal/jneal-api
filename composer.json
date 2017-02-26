@@ -2,9 +2,21 @@
     "name": "jtneal/jneal-api",
     "description": "jneal.com - API",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Jason Neal",
+            "email": "jtneal@gmail.com"
+        }
+    ],
     "require": {
+        "php": "~7.0",
         "silex/silex": "~2.0",
         "monolog/monolog": "^1.22"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0",
+        "mockery/mockery": "^0.9.8",
+        "satooshi/php-coveralls": "^1.0"
     },
     "autoload": {
         "psr-4": {

@@ -28,12 +28,16 @@ class IOCEntries implements ServiceProviderInterface
      */
     private function providers(Container $app)
     {
+        $app['auth'] = function ($app): Auth {
+            return new Auth($app['request'], $app['auth.token']);
+        };
+
         $app['pdo'] = function ($app): \PDO {
             return new \PDO($app['db.dsn'], $app['db.user'], $app['db.pass']);
         };
 
         $app['repository.pdo'] = $app->factory(function ($app): PDORepository {
-            return new PDORepository($app['pdo']);
+            return new PDORepository($app['pdo'], $app['request']);
         });
 
         $app['repository.base'] = function (): BaseRepository {

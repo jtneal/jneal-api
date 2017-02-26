@@ -41,4 +41,30 @@ class BaseRepository implements Repository
     {
         return [];
     }
+
+    /**
+     * @return bool
+     */
+    public function add(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function update(int $id): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        return true;
+    }
 }

@@ -4,6 +4,7 @@ namespace JNeal;
 
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class RouterTest
@@ -18,6 +19,10 @@ class RouterTest extends TestCase
     {
         $app = new Application();
         $router = new Router();
+
+        $app['auth.token'] = 'test';
+        $app['request'] = Request::createFromGlobals();
+        $app['auth'] = new Auth($app['request'], $app['auth.token']);
 
         $controllerCollection = $router->connect($app);
 

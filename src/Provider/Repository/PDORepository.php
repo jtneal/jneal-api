@@ -2,6 +2,7 @@
 
 namespace JNeal\Provider\Repository;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -16,6 +17,11 @@ class PDORepository implements Repository
     private $db;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
      * @var string
      */
     private $table;
@@ -27,10 +33,12 @@ class PDORepository implements Repository
 
     /**
      * @param \PDO $db
+     * @param Request $request
      */
-    public function __construct(\PDO $db)
+    public function __construct(\PDO $db, Request $request)
     {
         $this->db = $db;
+        $this->request = $request;
     }
 
     /**
@@ -61,7 +69,8 @@ class PDORepository implements Repository
      */
     public function getList(int $limit = 0): array
     {
-        $select = $this->db->prepare($this->getSelectOrderByQuery() . ($limit ? "LIMIT $limit" : ''));
+        $limit = $limit ? "LIMIT $limit" : '';
+        $select = $this->db->prepare("SELECT * FROM {$this->table} ORDER BY {$this->primaryKey} DESC " . $limit);
         $select->execute();
 
         return $select->fetchAll(\PDO::FETCH_ASSOC);
@@ -82,7 +91,7 @@ class PDORepository implements Repository
      */
     public function getItem(int $id): array
     {
-        $select = $this->db->prepare($this->getSelectQuery() . "WHERE {$this->primaryKey} = ? LIMIT 1");
+        $select = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ? LIMIT 1");
         $select->execute([$id]);
 
         if (!$item = $select->fetch(\PDO::FETCH_ASSOC)) {
@@ -93,18 +102,63 @@ class PDORepository implements Repository
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    private function getSelectQuery(): string
+    public function add(): bool
     {
-        return "SELECT * FROM {$this->table} ";
+        $data = $this->getFilteredData();
+        $keys = implode(',', array_keys($data));
+        $prepared = implode(',', array_fill(0, count($data), '?'));
+
+        $insert = $this->db->prepare("INSERT INTO {$this->table} ($keys) VALUES ($prepared)");
+        $insert->execute(array_values($data));
+
+        return true;
     }
 
     /**
-     * @return string
+     * @param int $id
+     * @return bool
      */
-    private function getSelectOrderByQuery(): string
+    public function update(int $id): bool
     {
-        return $this->getSelectQuery() . "ORDER BY {$this->primaryKey} DESC ";
+        $data = $this->getFilteredData();
+        $prepare = implode(' = ?, ', array_keys($data));
+
+        $update = $this->db->prepare("UPDATE {$this->table} SET $prepare = ? WHERE {$this->primaryKey} = ?");
+        $update->execute(array_merge(array_values($data), [$id]));
+
+        return true;
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        $delete = $this->db->prepare("DELETE FROM {$this->table} WHERE {$this->primaryKey} = ?");
+        $delete->execute([$id]);
+
+        return true;
+    }
+
+    /**
+     * @return array
+     */
+    private function getValidColumns(): array
+    {
+        $select = $this->db->prepare("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = ?");
+        $select->execute([$this->table]);
+
+        return $select->fetchAll(\PDO::FETCH_COLUMN, 0);
+    }
+
+    /**
+     * @return array
+     */
+    private function getFilteredData(): array
+    {
+        return array_intersect_key($this->request->request->all(), array_flip($this->getValidColumns()));
     }
 }

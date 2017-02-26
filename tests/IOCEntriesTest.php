@@ -22,9 +22,11 @@ class IOCEntriesTest extends TestCase
 
         $entries->register($app);
 
+        $app['auth.token'] = 'test';
         $app['request'] = Request::createFromGlobals();
         $app['pdo'] = $this->createMock('PDO');
 
+        $this->assertInstanceOf('JNeal\Auth', $app['auth']);
         $this->assertInstanceOf('JNeal\Provider\Repository\PDORepository', $app['repository.pdo']);
         $this->assertInstanceOf('JNeal\Base\BaseRepository', $app['repository.base']);
         $this->assertInstanceOf('JNeal\Provider\ResponseFactory\JsonResponseFactory', $app['responseFactory.json']);

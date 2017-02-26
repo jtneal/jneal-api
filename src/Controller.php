@@ -65,4 +65,36 @@ class Controller
     {
         return $this->responseFactory->make($this->repository->getItem($id));
     }
+
+    /**
+     * @return Response
+     */
+    public function add(): Response
+    {
+        $this->repository->add();
+
+        return $this->responseFactory->make(['message' => 'Successfully added']);
+    }
+
+    /**
+     * @param int $id
+     * @return Response
+     */
+    public function update(int $id): Response
+    {
+        $this->repository->update($id);
+
+        return $this->responseFactory->make(['message' => 'Successfully updated']);
+    }
+
+    /**
+     * @param int $id
+     * @return Response
+     */
+    public function delete(int $id): Response
+    {
+        $this->repository->delete($id);
+
+        return $this->responseFactory->make(['message' => 'Successfully deleted']);
+    }
 }

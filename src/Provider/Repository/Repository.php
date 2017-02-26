@@ -18,4 +18,21 @@ interface Repository
      * @return array
      */
     public function getItem(int $id): array;
+
+    /**
+     * @return bool
+     */
+    public function add(): bool;
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function update(int $id): bool;
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool;
 }

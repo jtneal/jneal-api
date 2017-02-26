@@ -20,9 +20,14 @@ class Router implements ControllerProviderInterface
     {
         $controllers = $app['controllers_factory'];
 
+        $auth = [$app['auth'], 'authenticate'];
+
         $controllers->get('/', 'controller.base:index');
-        $controllers->get('/portfolio/', 'controller.portfolio:index');
+        $controllers->get('/portfolio', 'controller.portfolio:index');
+        $controllers->post('/portfolio', 'controller.portfolio:add')->before($auth);
         $controllers->get('/portfolio/{id}', 'controller.portfolio:fetch')->assert('id', '\d+');
+        $controllers->post('/portfolio/{id}', 'controller.portfolio:update')->assert('id', '\d+')->before($auth);
+        $controllers->delete('/portfolio/{id}', 'controller.portfolio:delete')->assert('id', '\d+')->before($auth);
 
         return $controllers;
     }

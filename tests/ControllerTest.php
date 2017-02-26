@@ -26,5 +26,8 @@ class ControllerTest extends TestCase
 
         $this->assertContains('{"links":[', $controller->index()->getContent());
         $this->assertEquals('[]', $controller->fetch(0)->getContent());
+        $this->assertEquals('{"message":"Successfully added"}', $controller->add()->getContent());
+        $this->assertEquals('{"message":"Successfully updated"}', $controller->update(0)->getContent());
+        $this->assertEquals('{"message":"Successfully deleted"}', $controller->delete(0)->getContent());
     }
 }

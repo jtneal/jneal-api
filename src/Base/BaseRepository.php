@@ -15,7 +15,7 @@ class BaseRepository implements Repository
      */
     public function getList(): array
     {
-        $uri = 'http://'  . ($_SERVER['SERVER_NAME'] ?? 'jneal.com') . $_SERVER['REQUEST_URI'];
+        $uri = 'http://'  . ($_SERVER['SERVER_NAME'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
 
         return [
             'links' => [

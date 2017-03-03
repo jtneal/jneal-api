@@ -65,7 +65,7 @@ class IOCEntries implements ServiceProviderInterface
         $app['controller.portfolio'] = function ($app): Controller {
             return new Controller(
                 $app['request'],
-                $app['repository.pdo']->setTable('portfolio')->setPrimaryKey('portfolio_id'),
+                $app['repository.pdo']->setTable('portfolio')->setPrimaryKey('id'),
                 $app['responseFactory.json']
             );
         };
